@@ -9,6 +9,7 @@ from kivy.uix.textinput import TextInput
 from kivy.core.window import Window
 from instructions import *
 from timer import Timer
+from ruffier import test
 window.clearcolor = (.33, .65, .83, 1)
 lbl_color = (31, .199, .224, 1)
 btn_color = (.337, .50, .23, 1)
@@ -21,7 +22,7 @@ p3 = 0
 
 
 
-# основний клас
+# основний клас(перший)
 class InstrScr(Screen):
     def __init__(self, **kwargs):
         super.__init__(**kwargs)
@@ -58,15 +59,16 @@ class InstrScr(Screen):
             self.manager.current = 'second'
 
 
-# різні класи(до першого вікна)
+# різні класи(до другого вікна)
 class PulseScr(Screen):
     def __init__(self, **kwargs):
         super.__init__(**kwargs)
         self.next_screen = False
+        
         instr = Label(text=txt_test1, color=lbl_color, bold=True)
 
-
         self.lbl_sec = Timer(15, color=lbl_color, bold=True)
+        self.lbl_sec.bind(done=self.end_timer)
         lbl_result = Label(text="Введіть результат: ", halign="right", color=lbl_color, bold=True)
         self.input_result = TextInput(text="1", multiline=False)
         self.input_result.set_disabled(False)
@@ -82,6 +84,15 @@ class PulseScr(Screen):
 
         self.add_widget(main_line)
 
+        def end_timer(self, *args):
+            self.next_screen = True
+            set.input_result.set_disabled(False)
+            self.btn.text = "Продовжити"
+
+
+
+
+
 def next(self):
     global p1
     if not self.next_screen:
@@ -91,11 +102,11 @@ def next(self):
         p1 = check_int(self.input_result.text)
         if p1 <=1 or p1 is false:
             p1 = 0
-            self.input_result.text() = str(p1)
+            self.input_result.text = str(p1)
         else: 
             self.manager.current = 'third'
 
-# клас до 2 вікна
+# клас до 3 вікна
 class SitsScr(Screen):
     def __init__(self, **kwargs):
         super.__init__(**kwargs)
@@ -153,19 +164,37 @@ class PulseScr2(Screen):
 
     # функція для переходу на наступне вікно
     def next(self):
-        self.manager.current = 'fifth'
+        global p2, p3
+        p2 = check_int(self.input_result.text)
+        p2 = check_int(self.input_after_res.text)
+        if p2 is False or p2 < 1:
+            p2 = 0
+            self.input_result.text = str(p2)
+        elif p3 is False or p3 < 1:  
+            p3 = 0
+            self.input_result.text = str(3)
+        else:
+            self.manager.current = 'fifth'
+
+
 # для 4 вікна
 class ResultScr(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.instr = Label(text="Ваш індекс Руфʼє:-14.8")
-        self.index = Label(text="Працездатність серця: висока")
+        
         main_line = BoxLayout(orientation="vertical", size_hint=(.5, .1), pos_hint={'center_x': .5, 'center_y': .5})
         main_line.add_widget(self.instr)
-        main_line.add_widget(self.index)
+        
         self.add_widget(main_line)
+        self.on_enter = self.result
 
-# для 5
+    def result(self):
+        self.instr.text = name + '\n' + test(p1, p2, p3, age)
+
+
+
+# для 5 вікна
 class HeartCheck(App):
     def build(self):
         sm = ScreenManager
